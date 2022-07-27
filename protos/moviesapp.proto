@@ -1,14 +1,12 @@
 syntax = "proto3";
 
-option go_package = "moviesapp.com/grpc/protos";
+option go_package = "pb";
 option java_multiple_files = true;
 option java_package = "io.grpc.app1.moviesapp";
 option java_outer_classname = "MoviesAppProto";
 option objc_class_prefix = "MAP";
 
-package moviesapp;
-
-service Upvotes {
+service Movie {
   rpc GetMovies (Empty) returns (stream MovieInfo);
   rpc GetMovieByID (ID) returns (MovieInfo);
   rpc CreateMovie (MovieInfo) returns (ID);
