@@ -17,9 +17,11 @@ const (
 func main() {
 	conn, err := grpc.Dial(address, grpc.WithInsecure(),
 		grpc.WithBlock())
+
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
+
 	defer conn.Close()
 	client := pb.NewMovieClient(conn)
 
@@ -41,32 +43,41 @@ func main() {
 
 func runGetMovies(client pb.MovieClient) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+
 	defer cancel()
 	req := &pb.Empty{}
 	stream, err := client.GetMovies(ctx, req)
+
 	if err != nil {
 		log.Fatalf("%v.GetMovies(_) = _, %v", client, err)
 	}
+
 	for {
 		row, err := stream.Recv()
+
 		if err == io.EOF {
 			break
 		}
+
 		if err != nil {
 			log.Fatalf("%v.GetMovies(_) = _, %v", client, err)
 		}
+
 		log.Printf("MovieInfo: %v", row)
 	}
 }
 
 func runGetMovie(client pb.MovieClient, movieid string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+
 	defer cancel()
 	req := &pb.ID{Value: movieid}
 	res, err := client.GetMovieByID(ctx, req)
+	
 	if err != nil {
-		log.Fatalf("%v.GetMovie(_) = _, %v", client, err)
+		log.Fatalf("%v.GetMovieByID(_) = _, %v", client, err)
 	}
+
 	log.Printf("MovieInfo: %v", res)
 }
 
@@ -92,14 +103,19 @@ func runCreateMovie(client pb.MovieClient, isbn string,
 func runUpdateMovie(client pb.MovieClient, movieid string,
 	isbn string, title string, firstname string, lastname string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	
 	defer cancel()
+
 	req := &pb.MovieInfo{ID: movieid, Isbn: isbn,
 		Title: title, Director: &pb.Director{
 			Firstname: firstname, Lastname: lastname}}
-	res, err := client.UpdateMovieByID(ctx, req)
+	
+			res, err := client.UpdateMovieByID(ctx, req)
+
 	if err != nil {
 		log.Fatalf("%v.UpdateMovie(_) = _, %v", client, err)
 	}
+
 	if int(res.GetValue()) == 1 {
 		log.Printf("UpdateMovie Success")
 	} else {

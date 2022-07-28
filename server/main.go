@@ -61,7 +61,7 @@ func (s *movieServer) GetMovies(in *pb.Empty,
 	return nil
 }
 
-func (s *movieServer) GetMovie(ctx context.Context,
+func (s *movieServer) GetMovieByID(ctx context.Context,
 	in *pb.ID) (*pb.MovieInfo, error) {
 	log.Printf("Received: %v", in)
 
@@ -87,11 +87,12 @@ func (s *movieServer) CreateMovie(ctx context.Context,
 	return &res, nil
 }
 
-func (s *movieServer) UpdateMovie(ctx context.Context,
+func (s *movieServer) UpdateMovieByID(ctx context.Context,
 	in *pb.MovieInfo) (*pb.Status, error) {
 	log.Printf("Received: %v", in)
 
 	res := pb.Status{}
+	
 	for index, movie := range movies {
 		if movie.GetID() == in.GetID() {
 			movies = append(movies[:index], movies[index+1:]...)
@@ -105,11 +106,12 @@ func (s *movieServer) UpdateMovie(ctx context.Context,
 	return &res, nil
 }
 
-func (s *movieServer) DeleteMovie(ctx context.Context,
+func (s *movieServer) DeleteMovieByID(ctx context.Context,
 	in *pb.ID) (*pb.Status, error) {
 	log.Printf("Received: %v", in)
 
 	res := pb.Status{}
+
 	for index, movie := range movies {
 		if movie.GetID() == in.GetValue() {
 			movies = append(movies[:index], movies[index+1:]...)
